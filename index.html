@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#153b63"><meta name="description" content="Personal CA Final Financial Reporting study tracker">
+<link rel="manifest" href="manifest.webmanifest">
+<title>CA Final FR Tracker</title>
+<style>
+:root{--navy:#153b63;--blue:#2463a0;--bg:#f3f6fa;--card:#fff;--ink:#172536;--muted:#68788a;--green:#16845b;--amber:#a96900;--line:#e2e8f0}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:linear-gradient(135deg,#153b63,#2463a0);color:white;padding:22px 17px 20px;border-radius:0 0 22px 22px}
+header h1{font-size:21px;margin:0 0 5px}header p{margin:0;color:#d8e8f8;font-size:13px}
+main{max-width:760px;margin:auto;padding:14px 13px 90px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px;margin:12px 0;box-shadow:0 2px 8px #1c35500a}
+.section-title{font-size:15px;font-weight:750;margin:0 0 12px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.metric{background:#f6f9fc;border-radius:12px;padding:12px;min-width:0}
+.metric small{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}.metric strong{font-size:20px;letter-spacing:-.4px}
+.progress{height:9px;background:#e7edf4;border-radius:99px;overflow:hidden;margin:10px 0 5px}.bar{height:100%;background:var(--green);width:0%}
+label{display:block;color:var(--muted);font-size:12px;margin:10px 0 5px}
+input,select,button{font:inherit}input[type=number],input[type=date],select,input[type=search]{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:10px;background:white;color:var(--ink)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.big{font-size:25px;font-weight:800;color:var(--navy)}.hint{font-size:12px;color:var(--muted);line-height:1.45}
+button{border:0;border-radius:10px;background:var(--navy);color:white;padding:11px 14px;font-weight:650;cursor:pointer}
+button.secondary{background:#eaf1f8;color:var(--navy)}button.danger{background:#fff0ed;color:#a33b2c}
+.tabs{display:flex;gap:7px;overflow:auto;margin:13px 0}.tabs button{white-space:nowrap;background:#e4ebf3;color:#29435f}.tabs button.active{background:var(--navy);color:white}
+.part{display:flex;align-items:flex-start;gap:10px;padding:12px 2px;border-bottom:1px solid var(--line)}.part:last-child{border-bottom:0}
+.part input{width:20px;height:20px;accent-color:var(--green);flex:none;margin-top:2px}
+.part-main{flex:1;min-width:0}.part-title{font-weight:650;font-size:14px}.part-sub{font-size:12px;color:var(--muted);margin-top:3px}
+.part.done .part-title{text-decoration:line-through;color:#718096}
+.badge{font-size:11px;background:#edf3f8;padding:4px 7px;border-radius:7px;color:#4b6178;white-space:nowrap}
+.chapter{font-weight:750;color:var(--navy);background:#f2f6fa;padding:10px;border-radius:9px;margin:12px 0 3px}
+.topic{display:grid;grid-template-columns:1fr 90px;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.topic input{width:90px}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:15px}
+.hidden{display:none!important}
+@media(min-width:600px){main{padding-top:20px}.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<header><h1>CA Final FR Tracker</h1><p>Your lecture progress • Remaining hours • 15 January 2027 target</p></header>
+<main>
+<section id="dashboard">
+ <div class="card">
+  <div class="section-title">Your progress</div>
+  <div class="grid">
+   <div class="metric"><small>Recorded video completed</small><strong id="watched">—</strong></div>
+   <div class="metric"><small>Recorded video remaining</small><strong id="remaining">—</strong></div>
+   <div class="metric"><small>Parts remaining</small><strong id="parts">—</strong></div>
+   <div class="metric"><small>Course progress</small><strong id="percent">—</strong></div>
+  </div>
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div class="hint" id="progressText"></div>
+ </div>
+ <div class="card">
+  <div class="section-title">Deadline calculator</div>
+  <div class="row">
+   <div><label>Target date</label><input id="deadline" type="date" value="2027-01-15"></div>
+   <div><label>Playback speed</label><select id="speed"><option>1.25</option><option selected>1.5</option><option>1.75</option><option>2</option><option>1</option></select></div>
+  </div>
+  <div class="row">
+   <div><label>Extra practice / revision hours per day</label><input id="practice" type="number" min="0" step=".25" value=".5"></div>
+   <div><label>Additional-topic hours (estimate total)</label><input id="extraTotal" type="number" min="0" step=".5" value="0" placeholder="Unknown yet"></div>
+  </div>
+  <div style="margin-top:13px">
+   <div class="hint">Minimum video watching per day</div><div class="big" id="dailyVideo">—</div>
+   <div class="hint">Minimum total FR study time per day, including practice allowance</div><div class="big" id="dailyTotal">—</div>
+   <div class="hint" id="daysLeft"></div>
+  </div>
+  <p class="hint">The five topics absent from the PDF's duration table are not included until you enter an estimated combined duration above.</p>
+ </div>
+ <div class="card">
+  <div class="section-title">Quick actions</div>
+  <div class="row"><button onclick="showTab('lectures')">Update watched parts</button><button class="secondary" onclick="showTab('extras')">Additional topics</button></div>
+  <p class="hint">Progress is saved automatically on this device. Use Backup to export or restore your progress.</p>
+ </div>
+</section>
+<section id="lectures" class="hidden">
+ <div class="card">
+  <div class="section-title">Lecture tracker</div>
+  <input id="search" type="search" placeholder="Search chapter, Ind AS or lecture number…" oninput="renderParts()">
+  <div class="row" style="margin-top:10px">
+   <select id="filter" onchange="renderParts()"><option value="all">All parts</option><option value="todo">Not watched</option><option value="done">Watched</option></select>
+   <button class="secondary" onclick="markVisible()">Mark visible as watched</button>
+  </div>
+  <div id="partsList"></div>
+ </div>
+</section>
+<section id="extras" class="hidden">
+ <div class="card">
+  <div class="section-title">Topics not timed in your PDF</div>
+  <p class="hint">Enter total video hours when the faculty publishes them. These estimates are added to the deadline calculation. Mark each topic complete when finished.</p>
+  <div id="extraList"></div>
+ </div>
+</section>
+<section id="settings" class="hidden">
+ <div class="card">
+  <div class="section-title">Backup & settings</div>
+  <p class="hint">Export a backup before changing phones or clearing browser data. Import the backup on your other device to restore progress.</p>
+  <div class="row"><button onclick="exportBackup()">Export backup</button><button class="secondary" onclick="document.getElementById('importFile').click()">Import backup</button></div>
+  <input id="importFile" type="file" accept="application/json" class="hidden" onchange="importBackup(event)">
+  <p style="margin-top:18px"><button class="danger" onclick="resetProgress()">Reset all progress</button></p>
+  <p class="hint">Initial progress assumes all parts before Lecture 29 Part 1 were already watched, based on your stated position. Please correct any part that differs.</p>
+ </div>
+</section>
+<nav class="tabs">
+ <button class="active" data-tab="dashboard" onclick="showTab('dashboard')">Home</button>
+ <button data-tab="lectures" onclick="showTab('lectures')">Lectures</button>
+ <button data-tab="extras" onclick="showTab('extras')">Extra topics</button>
+ <button data-tab="settings" onclick="showTab('settings')">Backup</button>
+</nav>
+<footer>Built from your CA Aakash Kandoi FR tracker PDF • Data stays on this device unless you export it.</footer>
+</main>
+<script>
+const sourceRows = [{"chapter": "Intro to Ind AS & Sch. III", "lecture": 1, "part": 1, "seconds": 5880}, {"chapter": "Intro to Ind AS & Sch. III", "lecture": 1, "part": 2, "seconds": 4260}, {"chapter": "Intro to Ind AS & Sch. III", "lecture": 2, "part": 1, "seconds": 5580}, {"chapter": "Intro to Ind AS & Sch. III", "lecture": 2, "part": 2, "seconds": 4320}, {"chapter": "Ind AS 16", "lecture": 3, "part": 1, "seconds": 5460}, {"chapter": "Ind AS 16", "lecture": 3, "part": 2, "seconds": 3420}, {"chapter": "Ind AS 16", "lecture": 4, "part": 1, "seconds": 5700}, {"chapter": "Ind AS 16", "lecture": 4, "part": 2, "seconds": 4020}, {"chapter": "Ind AS 16", "lecture": 5, "part": 1, "seconds": 6000}, {"chapter": "Ind AS 16", "lecture": 5, "part": 2, "seconds": 3360}, {"chapter": "Ind AS 16", "lecture": 6, "part": 1, "seconds": 5760}, {"chapter": "Ind AS 16", "lecture": 6, "part": 2, "seconds": 3540}, {"chapter": "Ind AS 16", "lecture": 7, "part": 1, "seconds": 5700}, {"chapter": "Ind AS 38", "lecture": 7, "part": 2, "seconds": 3300}, {"chapter": "Ind AS 38", "lecture": 8, "part": 1, "seconds": 5040}, {"chapter": "Ind AS 38", "lecture": 8, "part": 2, "seconds": 4440}, {"chapter": "Ind AS 38", "lecture": 9, "part": 1, "seconds": 4860}, {"chapter": "Ind AS 38", "lecture": 9, "part": 2, "seconds": 3300}, {"chapter": "Ind AS 40", "lecture": 10, "part": 1, "seconds": 5340}, {"chapter": "Ind AS 40", "lecture": 10, "part": 2, "seconds": 4920}, {"chapter": "Ind AS 36", "lecture": 11, "part": 1, "seconds": 4860}, {"chapter": "Ind AS 36", "lecture": 11, "part": 2, "seconds": 5220}, {"chapter": "Ind AS 36", "lecture": 12, "part": 1, "seconds": 6300}, {"chapter": "Ind AS 36", "lecture": 12, "part": 2, "seconds": 3300}, {"chapter": "Ind AS 36", "lecture": 13, "part": 1, "seconds": 5520}, {"chapter": "Ind AS 36", "lecture": 13, "part": 2, "seconds": 4080}, {"chapter": "Ind AS 36", "lecture": 14, "part": 1, "seconds": 6420}, {"chapter": "Ind AS 105", "lecture": 14, "part": 2, "seconds": 2580}, {"chapter": "Ind AS 105", "lecture": 15, "part": 1, "seconds": 5400}, {"chapter": "Ind AS 105", "lecture": 15, "part": 2, "seconds": 3120}, {"chapter": "Ind AS 105", "lecture": 16, "part": 1, "seconds": 6600}, {"chapter": "Ind AS 41", "lecture": 16, "part": 2, "seconds": 2100}, {"chapter": "Ind AS 41", "lecture": 17, "part": 1, "seconds": 5280}, {"chapter": "Ind AS 41", "lecture": 17, "part": 2, "seconds": 4620}, {"chapter": "Ind AS 41", "lecture": 18, "part": 1, "seconds": 4260}, {"chapter": "Ind AS 2", "lecture": 18, "part": 2, "seconds": 5160}, {"chapter": "Ind AS 2", "lecture": 19, "part": 1, "seconds": 9720}, {"chapter": "Ind AS 1", "lecture": 19, "part": 2, "seconds": 4440}, {"chapter": "Ind AS 1", "lecture": 20, "part": 1, "seconds": 5100}, {"chapter": "Ind AS 1", "lecture": 20, "part": 2, "seconds": 4380}, {"chapter": "Ind AS 10", "lecture": 21, "part": 1, "seconds": 4980}, {"chapter": "Ind AS 10", "lecture": 21, "part": 2, "seconds": 3900}, {"chapter": "Ind AS 10", "lecture": 22, "part": 1, "seconds": 4200}, {"chapter": "Ind AS 10", "lecture": 22, "part": 2, "seconds": 1020}, {"chapter": "Ind AS 37", "lecture": 22, "part": 3, "seconds": 5040}, {"chapter": "Ind AS 37", "lecture": 23, "part": 1, "seconds": 3840}, {"chapter": "Ind AS 37", "lecture": 23, "part": 2, "seconds": 5580}, {"chapter": "Ind AS 37", "lecture": 23, "part": 3, "seconds": 600}, {"chapter": "Ind AS 8", "lecture": 24, "part": 1, "seconds": 4080}, {"chapter": "Ind AS 8", "lecture": 24, "part": 2, "seconds": 3840}, {"chapter": "Ind AS 8", "lecture": 25, "part": 1, "seconds": 4560}, {"chapter": "Ind AS 8", "lecture": 25, "part": 2, "seconds": 3900}, {"chapter": "Ind AS 8", "lecture": 25, "part": 3, "seconds": 480}, {"chapter": "Ind AS 108", "lecture": 26, "part": 1, "seconds": 6060}, {"chapter": "Ind AS 108", "lecture": 26, "part": 2, "seconds": 4920}, {"chapter": "Financial Instruments", "lecture": 27, "part": 1, "seconds": 5100}, {"chapter": "Financial Instruments", "lecture": 27, "part": 2, "seconds": 4860}, {"chapter": "Financial Instruments", "lecture": 28, "part": 1, "seconds": 6000}, {"chapter": "Financial Instruments", "lecture": 28, "part": 2, "seconds": 3180}, {"chapter": "Financial Instruments", "lecture": 29, "part": 1, "seconds": 6180}, {"chapter": "Financial Instruments", "lecture": 29, "part": 2, "seconds": 3180}, {"chapter": "Financial Instruments", "lecture": 30, "part": 1, "seconds": 5820}, {"chapter": "Financial Instruments", "lecture": 30, "part": 2, "seconds": 3180}, {"chapter": "Financial Instruments", "lecture": 31, "part": 1, "seconds": 4380}, {"chapter": "Financial Instruments", "lecture": 31, "part": 2, "seconds": 4380}, {"chapter": "Financial Instruments", "lecture": 32, "part": 1, "seconds": 4080}, {"chapter": "Financial Instruments", "lecture": 32, "part": 2, "seconds": 5460}, {"chapter": "Financial Instruments", "lecture": 33, "part": 1, "seconds": 5280}, {"chapter": "Financial Instruments", "lecture": 33, "part": 2, "seconds": 4140}, {"chapter": "Financial Instruments", "lecture": 34, "part": 1, "seconds": 4740}, {"chapter": "Financial Instruments", "lecture": 34, "part": 2, "seconds": 4200}, {"chapter": "Financial Instruments", "lecture": 35, "part": 1, "seconds": 4920}, {"chapter": "Financial Instruments", "lecture": 35, "part": 2, "seconds": 3660}, {"chapter": "Financial Instruments", "lecture": 36, "part": 1, "seconds": 6300}, {"chapter": "Financial Instruments", "lecture": 36, "part": 2, "seconds": 3780}, {"chapter": "Financial Instruments", "lecture": 37, "part": 1, "seconds": 5760}, {"chapter": "Financial Instruments", "lecture": 37, "part": 2, "seconds": 4620}, {"chapter": "Financial Instruments", "lecture": 38, "part": 1, "seconds": 4800}, {"chapter": "Financial Instruments", "lecture": 38, "part": 2, "seconds": 3960}, {"chapter": "Financial Instruments", "lecture": 39, "part": 1, "seconds": 4980}, {"chapter": "Financial Instruments", "lecture": 39, "part": 2, "seconds": 3480}, {"chapter": "Financial Instruments", "lecture": 40, "part": 1, "seconds": 5640}, {"chapter": "Financial Instruments", "lecture": 40, "part": 2, "seconds": 4020}, {"chapter": "Financial Instruments", "lecture": 41, "part": 1, "seconds": 4980}, {"chapter": "Financial Instruments", "lecture": 41, "part": 2, "seconds": 4320}, {"chapter": "Financial Instruments", "lecture": 41, "part": 3, "seconds": 6960}, {"chapter": "Ind AS 20", "lecture": 42, "part": 1, "seconds": 4920}, {"chapter": "Ind AS 20", "lecture": 42, "part": 2, "seconds": 4440}, {"chapter": "Ind AS 20", "lecture": 43, "part": 1, "seconds": 5700}, {"chapter": "Ind AS 34", "lecture": 43, "part": 2, "seconds": 2100}, {"chapter": "Ind AS 34", "lecture": 43, "part": 3, "seconds": 9240}, {"chapter": "Ind AS 23", "lecture": 44, "part": 1, "seconds": 4800}, {"chapter": "Ind AS 23", "lecture": 44, "part": 2, "seconds": 3720}, {"chapter": "Ind AS 23", "lecture": 45, "part": 1, "seconds": 4380}, {"chapter": "Ind AS 23", "lecture": 45, "part": 2, "seconds": 4320}, {"chapter": "Ind AS 23", "lecture": 46, "part": 1, "seconds": 4740}, {"chapter": "Ind AS 23", "lecture": 46, "part": 2, "seconds": 3240}, {"chapter": "Ind AS 116", "lecture": 47, "part": 1, "seconds": 5820}, {"chapter": "Ind AS 116", "lecture": 47, "part": 2, "seconds": 3060}, {"chapter": "Ind AS 116", "lecture": 48, "part": 1, "seconds": 4500}, {"chapter": "Ind AS 116", "lecture": 48, "part": 2, "seconds": 4500}, {"chapter": "Ind AS 116", "lecture": 49, "part": 1, "seconds": 4440}, {"chapter": "Ind AS 116", "lecture": 49, "part": 2, "seconds": 5760}, {"chapter": "Ind AS 116", "lecture": 49, "part": 3, "seconds": 1860}, {"chapter": "Ind AS 116", "lecture": 50, "part": 1, "seconds": 5220}, {"chapter": "Ind AS 116", "lecture": 50, "part": 2, "seconds": 2400}, {"chapter": "Ind AS 116", "lecture": 51, "part": 1, "seconds": 4440}, {"chapter": "Ind AS 116", "lecture": 51, "part": 2, "seconds": 4740}, {"chapter": "Ind AS 116", "lecture": 52, "part": 1, "seconds": 6240}, {"chapter": "Ind AS 116", "lecture": 52, "part": 2, "seconds": 3120}, {"chapter": "Ind AS 116", "lecture": 53, "part": 1, "seconds": 5220}, {"chapter": "Ind AS 116", "lecture": 53, "part": 2, "seconds": 3060}, {"chapter": "Ind AS 116", "lecture": 53, "part": 3, "seconds": 1620}, {"chapter": "Ind As 116 Vs As 19", "lecture": 53, "part": 4, "seconds": 720}, {"chapter": "Ind AS 19", "lecture": 54, "part": 1, "seconds": 4740}, {"chapter": "Ind AS 19", "lecture": 54, "part": 2, "seconds": 4500}, {"chapter": "Ind AS 19", "lecture": 55, "part": 1, "seconds": 4620}, {"chapter": "Ind AS 19", "lecture": 55, "part": 2, "seconds": 4500}, {"chapter": "Ind AS 19", "lecture": 56, "part": 1, "seconds": 5040}, {"chapter": "Ind AS 19", "lecture": 56, "part": 2, "seconds": 2640}, {"chapter": "Ind AS 19", "lecture": 57, "part": 1, "seconds": 5100}, {"chapter": "Ind AS 19", "lecture": 57, "part": 2, "seconds": 4560}, {"chapter": "Ind AS 12", "lecture": 58, "part": 1, "seconds": 5760}, {"chapter": "Ind AS 12", "lecture": 58, "part": 2, "seconds": 4440}, {"chapter": "Ind AS 12", "lecture": 59, "part": 1, "seconds": 4560}, {"chapter": "Ind AS 12", "lecture": 59, "part": 2, "seconds": 4920}, {"chapter": "Ind AS 12", "lecture": 60, "part": 1, "seconds": 4980}, {"chapter": "Ind AS 12", "lecture": 60, "part": 2, "seconds": 4740}, {"chapter": "Ind AS 12", "lecture": 61, "part": 1, "seconds": 5460}, {"chapter": "Ind AS 12", "lecture": 61, "part": 2, "seconds": 3720}, {"chapter": "Ind AS 12", "lecture": 62, "part": 1, "seconds": 5400}, {"chapter": "Ind AS 12", "lecture": 62, "part": 2, "seconds": 5040}, {"chapter": "Ind AS 12", "lecture": 62, "part": 3, "seconds": 840}, {"chapter": "Ind AS 102", "lecture": 63, "part": 1, "seconds": 6000}, {"chapter": "Ind AS 102", "lecture": 63, "part": 2, "seconds": 3600}, {"chapter": "Ind AS 102", "lecture": 64, "part": 1, "seconds": 4680}, {"chapter": "Ind AS 102", "lecture": 64, "part": 2, "seconds": 4020}, {"chapter": "Ind AS 102", "lecture": 64, "part": 3, "seconds": 360}, {"chapter": "Ind AS 102", "lecture": 65, "part": 1, "seconds": 4980}, {"chapter": "Ind AS 102", "lecture": 65, "part": 2, "seconds": 2640}, {"chapter": "Ind AS 102", "lecture": 66, "part": 1, "seconds": 6600}, {"chapter": "Ind AS 102", "lecture": 66, "part": 2, "seconds": 3060}, {"chapter": "Ind AS 102", "lecture": 67, "part": 1, "seconds": 6600}, {"chapter": "Ind AS 102", "lecture": 67, "part": 2, "seconds": 3840}, {"chapter": "Ind AS 113", "lecture": 68, "part": 1, "seconds": 4080}, {"chapter": "Ind AS 113", "lecture": 68, "part": 2, "seconds": 6360}, {"chapter": "Ind AS 103", "lecture": 69, "part": 1, "seconds": 5220}, {"chapter": "Ind AS 103", "lecture": 69, "part": 2, "seconds": 4080}, {"chapter": "Ind AS 103", "lecture": 70, "part": 1, "seconds": 3900}, {"chapter": "Ind AS 103", "lecture": 70, "part": 2, "seconds": 5340}, {"chapter": "Ind AS 103", "lecture": 71, "part": 1, "seconds": 4920}, {"chapter": "Ind AS 103", "lecture": 71, "part": 2, "seconds": 2820}, {"chapter": "Ind AS 103", "lecture": 72, "part": 1, "seconds": 4560}, {"chapter": "Ind AS 103", "lecture": 72, "part": 2, "seconds": 4740}, {"chapter": "Ind AS 103", "lecture": 73, "part": 1, "seconds": 5040}, {"chapter": "Ind AS 103", "lecture": 73, "part": 2, "seconds": 2880}, {"chapter": "Ind AS 103", "lecture": 74, "part": 1, "seconds": 6120}, {"chapter": "Ind AS 103", "lecture": 74, "part": 2, "seconds": 2220}, {"chapter": "Ind AS 103", "lecture": 75, "part": 1, "seconds": 4920}, {"chapter": "Ind AS 103", "lecture": 75, "part": 2, "seconds": 2940}, {"chapter": "Ind AS 103", "lecture": 76, "part": 1, "seconds": 4860}, {"chapter": "Ind AS 103", "lecture": 76, "part": 2, "seconds": 2880}, {"chapter": "Ind AS 103", "lecture": 77, "part": 1, "seconds": 5520}, {"chapter": "Ind AS 103", "lecture": 77, "part": 2, "seconds": 3480}, {"chapter": "Ind AS 103", "lecture": 77, "part": 3, "seconds": 300}, {"chapter": "Ind AS 27 & 110", "lecture": 78, "part": 1, "seconds": 3960}, {"chapter": "Ind AS 110", "lecture": 78, "part": 2, "seconds": 3900}, {"chapter": "Ind AS 110", "lecture": 79, "part": 1, "seconds": 5340}, {"chapter": "Ind AS 110", "lecture": 79, "part": 2, "seconds": 3060}, {"chapter": "Ind AS 110", "lecture": 80, "part": 1, "seconds": 3660}, {"chapter": "Ind AS 110", "lecture": 80, "part": 2, "seconds": 3720}, {"chapter": "Ind AS 110", "lecture": 81, "part": 1, "seconds": 6420}, {"chapter": "Ind AS 110", "lecture": 81, "part": 2, "seconds": 3060}, {"chapter": "Ind AS 110", "lecture": 82, "part": 1, "seconds": 6060}, {"chapter": "Ind AS 110", "lecture": 82, "part": 2, "seconds": 5040}, {"chapter": "Ind AS 110", "lecture": 83, "part": 1, "seconds": 4800}, {"chapter": "Ind AS 110", "lecture": 83, "part": 2, "seconds": 1680}, {"chapter": "Ind AS 110", "lecture": 84, "part": 1, "seconds": 4620}, {"chapter": "Ind AS 110", "lecture": 84, "part": 2, "seconds": 3000}, {"chapter": "Ind AS 110", "lecture": 84, "part": 3, "seconds": 5760}, {"chapter": "Ind AS 110", "lecture": 85, "part": 1, "seconds": 7320}, {"chapter": "Ind AS 110", "lecture": 85, "part": 2, "seconds": 5100}, {"chapter": "Ind AS 110", "lecture": 86, "part": 1, "seconds": 6480}, {"chapter": "Ind AS 110", "lecture": 86, "part": 2, "seconds": 4080}, {"chapter": "Ind AS 111", "lecture": 87, "part": 1, "seconds": 2520}, {"chapter": "Ind AS 111", "lecture": 87, "part": 2, "seconds": 8640}, {"chapter": "Ind AS 111", "lecture": 88, "part": 1, "seconds": 3780}, {"chapter": "Ind AS 28", "lecture": 88, "part": 2, "seconds": 5280}, {"chapter": "Ind AS 28", "lecture": 89, "part": 1, "seconds": 5040}, {"chapter": "Ind AS 28", "lecture": 89, "part": 2, "seconds": 3960}, {"chapter": "Ind AS 28", "lecture": 90, "part": 1, "seconds": 5820}, {"chapter": "Ind AS 28 & 110 - Big Qs.", "lecture": 90, "part": 2, "seconds": 4980}, {"chapter": "CFS Extra Qs.", "lecture": 91, "part": 1, "seconds": 4680}, {"chapter": "CFS Extra Qs.", "lecture": 91, "part": 2, "seconds": 6480}, {"chapter": "Ind AS 111 & 28 Extra Qs.", "lecture": 91, "part": 3, "seconds": 4680}, {"chapter": "Ind AS 33", "lecture": 92, "part": 1, "seconds": 3060}, {"chapter": "Ind AS 33", "lecture": 92, "part": 2, "seconds": 4800}, {"chapter": "Ind AS 33", "lecture": 92, "part": 3, "seconds": 4440}, {"chapter": "Ind AS 33", "lecture": 93, "part": 1, "seconds": 4560}, {"chapter": "Ind AS 33", "lecture": 93, "part": 2, "seconds": 4920}, {"chapter": "Ind AS 33", "lecture": 94, "part": 1, "seconds": 7260}, {"chapter": "Ind AS 33", "lecture": 94, "part": 2, "seconds": 7140}, {"chapter": "Ind AS 21", "lecture": 95, "part": 1, "seconds": 6000}, {"chapter": "Ind AS 21", "lecture": 95, "part": 2, "seconds": 3780}, {"chapter": "Ind AS 21", "lecture": 96, "part": 1, "seconds": 8220}, {"chapter": "Ind AS 21", "lecture": 96, "part": 2, "seconds": 7560}, {"chapter": "Ind AS 115", "lecture": 97, "part": 1, "seconds": 5760}, {"chapter": "Ind AS 115", "lecture": 97, "part": 2, "seconds": 3180}, {"chapter": "Ind AS 115", "lecture": 98, "part": 1, "seconds": 5340}, {"chapter": "Ind AS 115", "lecture": 98, "part": 2, "seconds": 4140}, {"chapter": "Ind AS 115", "lecture": 99, "part": 1, "seconds": 6600}, {"chapter": "Ind AS 115", "lecture": 99, "part": 2, "seconds": 4200}, {"chapter": "Ind AS 115", "lecture": 100, "part": 1, "seconds": 5100}, {"chapter": "Ind AS 115", "lecture": 100, "part": 2, "seconds": 3660}, {"chapter": "Ind AS 115", "lecture": 101, "part": 1, "seconds": 5160}, {"chapter": "Ind AS 115", "lecture": 101, "part": 2, "seconds": 3900}, {"chapter": "Ind AS 115", "lecture": 102, "part": 1, "seconds": 5700}, {"chapter": "Ind AS 115", "lecture": 102, "part": 2, "seconds": 3420}, {"chapter": "Ind AS 115", "lecture": 103, "part": 1, "seconds": 4680}, {"chapter": "Ind AS 115", "lecture": 103, "part": 2, "seconds": 3540}, {"chapter": "Ind AS 115", "lecture": 103, "part": 3, "seconds": 5460}, {"chapter": "Ind AS 115 vs AS 7&9", "lecture": 103, "part": 4, "seconds": 720}, {"chapter": "Ind AS 7", "lecture": 104, "part": 1, "seconds": 4560}, {"chapter": "Ind AS 7", "lecture": 104, "part": 2, "seconds": 5520}, {"chapter": "Ind AS 7", "lecture": 104, "part": 3, "seconds": 3900}, {"chapter": "Ind AS 7", "lecture": 105, "part": 1, "seconds": 4920}, {"chapter": "Ind AS 7", "lecture": 105, "part": 2, "seconds": 3000}, {"chapter": "Ind AS 7", "lecture": 105, "part": 3, "seconds": 5700}, {"chapter": "Ind AS 24", "lecture": 106, "part": 1, "seconds": 5820}, {"chapter": "Ind AS 24", "lecture": 106, "part": 2, "seconds": 3540}];
+const initial = sourceRows.map((r,i)=>({...r,id:i,watched:r.lecture<29}));
+const defaultExtras=["Ind AS 101","Interpretation / Analysis of Financial Statements","Common Pool","Ethics","Technology"].map(name=>({name,hours:"",done:false}));
+let state=loadState();
+function loadState(){try{let x=JSON.parse(localStorage.getItem("cafrf_tracker_v1"));if(x&&Array.isArray(x.parts))return x}catch(e){}return {parts:initial,extras:defaultExtras,deadline:"2027-01-15",speed:"1.5",practice:".5",extraTotal:"0"}}
+function save(){localStorage.setItem("cafrf_tracker_v1",JSON.stringify(state));render()}
+function fmt(sec){let m=Math.round(sec/60),h=Math.floor(m/60),mm=m%60;return `${h}h ${String(mm).padStart(2,"0")}m`}
+function val(id){return document.getElementById(id).value}
+function syncInputs(){document.getElementById("deadline").value=state.deadline||"2027-01-15";document.getElementById("speed").value=state.speed||"1.5";document.getElementById("practice").value=state.practice??".5";document.getElementById("extraTotal").value=state.extraTotal??"0"}
+function calc(){
+ let total=state.parts.reduce((a,p)=>a+p.seconds,0),done=state.parts.filter(p=>p.watched).reduce((a,p)=>a+p.seconds,0),remain=total-done;
+ let count=state.parts.filter(p=>!p.watched).length,percent=total?done/total*100:0;
+ let deadline=new Date((state.deadline||"2027-01-15")+"T23:59:59"),today=new Date();today.setHours(0,0,0,0);
+ let days=Math.max(0,Math.floor((deadline-today)/86400000)+1),speed=Math.max(.1,Number(state.speed)||1),extra=Math.max(0,Number(state.extraTotal)||0),practice=Math.max(0,Number(state.practice)||0);
+ let perday=days?(remain/3600+extra)/speed/days:0;
+ return {total,done,remain,count,percent,days,perday,perdayTotal:perday+practice};
+}
+function render(){
+ let c=calc();
+ document.getElementById("watched").textContent=fmt(c.done);
+ document.getElementById("remaining").textContent=fmt(c.remain);
+ document.getElementById("parts").textContent=c.count;
+ document.getElementById("percent").textContent=c.percent.toFixed(1)+"%";
+ document.getElementById("bar").style.width=c.percent+"%";
+ document.getElementById("progressText").textContent=`${state.parts.filter(p=>p.watched).length} of ${state.parts.length} video parts marked watched.`;
+ document.getElementById("dailyVideo").textContent=c.days?c.perday.toFixed(2)+" hours/day":"Deadline has passed";
+ document.getElementById("dailyTotal").textContent=c.days?c.perdayTotal.toFixed(2)+" hours/day":"—";
+ document.getElementById("daysLeft").textContent=`${c.days} calendar days remaining (including today). Remaining original video: ${fmt(c.remain)}.`;
+ renderParts();renderExtras();
+}
+function renderParts(){
+ let q=(document.getElementById("search")?.value||"").toLowerCase(),filter=document.getElementById("filter")?.value||"all";
+ let list=document.getElementById("partsList");if(!list)return;list.innerHTML="";
+ let filtered=state.parts.filter(p=>(filter==="all"||(filter==="done"&&p.watched)||(filter==="todo"&&!p.watched))&&(`${p.chapter} lecture ${p.lecture} part ${p.part}`.toLowerCase().includes(q)));
+ let last="";
+ filtered.forEach(p=>{
+  if(p.chapter!==last){let h=document.createElement("div");h.className="chapter";h.textContent=p.chapter;list.appendChild(h);last=p.chapter}
+  let el=document.createElement("div");el.className="part"+(p.watched?" done":"");
+  let cb=document.createElement("input");cb.type="checkbox";cb.checked=p.watched;cb.onchange=()=>{p.watched=cb.checked;save()};
+  let main=document.createElement("div");main.className="part-main";
+  let title=document.createElement("div");title.className="part-title";title.textContent=`Lecture ${p.lecture} · Part ${p.part}`;
+  let sub=document.createElement("div");sub.className="part-sub";sub.textContent=fmt(p.seconds);
+  main.append(title,sub);let badge=document.createElement("span");badge.className="badge";badge.textContent=p.watched?"Watched":"Pending";
+  el.append(cb,main,badge);list.appendChild(el);
+ });
+ if(!filtered.length)list.textContent="No matching video parts.";
+}
+function renderExtras(){
+ let root=document.getElementById("extraList");if(!root)return;root.innerHTML="";
+ state.extras.forEach((x,i)=>{
+  let row=document.createElement("div");row.className="topic";
+  let left=document.createElement("div");let label=document.createElement("div");label.style.fontWeight="650";label.textContent=x.name;
+  let cb=document.createElement("input");cb.type="checkbox";cb.checked=x.done;cb.onchange=()=>{x.done=cb.checked;save()};
+  let sub=document.createElement("div");sub.className="hint";sub.append(cb,document.createTextNode(" Completed"));
+  left.append(label,sub);
+  let right=document.createElement("div");let inp=document.createElement("input");inp.type="number";inp.min="0";inp.step=".25";inp.placeholder="Hours";inp.value=x.hours;inp.setAttribute("aria-label",x.name+" hours");inp.onchange=()=>{x.hours=inp.value;state.extraTotal=state.extras.reduce((a,e)=>a+(Number(e.hours)||0),0).toString();document.getElementById("extraTotal").value=state.extraTotal;save()};
+  right.append(inp);row.append(left,right);root.append(row);
+ });
+}
+function showTab(id){["dashboard","lectures","extras","settings"].forEach(x=>document.getElementById(x).classList.toggle("hidden",x!==id));document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("active",b.dataset.tab===id));window.scrollTo(0,0)}
+function markVisible(){let q=val("search").toLowerCase(),filter=val("filter");state.parts.forEach(p=>{let match=(`${p.chapter} lecture ${p.lecture} part ${p.part}`).toLowerCase().includes(q);if(match&&(filter==="all"||filter==="todo"))p.watched=true});save()}
+function exportBackup(){let blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="CA_FR_Tracker_Backup.json";a.click();URL.revokeObjectURL(a.href)}
+function importBackup(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!Array.isArray(x.parts)||!Array.isArray(x.extras))throw 0;state=x;syncInputs();save();alert("Backup restored.")}catch(err){alert("This backup file is not valid.")}};r.readAsText(f)}
+function resetProgress(){if(confirm("Reset all lecture progress and additional-topic estimates?")){localStorage.removeItem("cafrf_tracker_v1");state=loadState();syncInputs();save()}}
+["deadline","speed","practice","extraTotal"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{state.deadline=val("deadline");state.speed=val("speed");state.practice=val("practice");state.extraTotal=val("extraTotal");save()}));
+syncInputs();render();
+if("serviceWorker" in navigator && location.protocol.startsWith("http"))navigator.serviceWorker.register("./sw.js").catch(()=>{});
+</script>
+</body></html>
